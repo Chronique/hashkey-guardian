@@ -22,7 +22,7 @@ export async function runAgentCycle() {
       return { success: true, message: "No new blocks" };
     }
 
-    console.log(`[Agent] Scanning ${fromBlock}  ${currentBlock}`);
+    console.log(`[Agent] Scanning ${fromBlock.toString()}  ${currentBlock.toString()}`);
     const events = await getLogsFromRange(fromBlock, currentBlock);
     console.log(`[Agent] ${events.length} events found`);
 
@@ -36,7 +36,10 @@ export async function runAgentCycle() {
         timestamp: Date.now(),
         blockNumber: currentBlock.toString(),
         analysis,
-        events: events.slice(0, 10),
+        events: events.slice(0, 10).map(e => ({
+          ...e,
+          blockNumber: e.blockNumber.toString() as any,
+        })),
         notified: false,
       };
       await saveIncident(incident);
@@ -50,13 +53,12 @@ export async function runAgentCycle() {
     await saveAgentState({ isRunning: false, lastProcessedBlock: currentBlock, lastRunAt: Date.now() });
 
     return {
-  success: true,
-  incident,
-  message: `Blocks ${fromBlock.toString()}-${currentBlock.toString()}. Events: ${events.length}. Risk: ${analysis.risk_score}/10`
-};
+      success: true,
+      incident,
+      message: `Blocks ${fromBlock.toString()}-${currentBlock.toString()}. Events: ${events.length}. Risk: ${analysis.risk_score}/10`,
+    };
   } catch (error) {
     await saveAgentState({ isRunning: false });
     return { success: false, message: `Error: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
-

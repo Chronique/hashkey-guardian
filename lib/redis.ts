@@ -9,7 +9,8 @@ export const redis = new Redis({
 const KEYS = { incidents: "guardian:incidents", agentState: "guardian:state", lastBlock: "guardian:lastBlock" };
 
 export async function saveIncident(incident: Incident): Promise<void> {
-  await redis.lpush(KEYS.incidents, JSON.stringify(incident));
+  const safe = JSON.parse(JSON.stringify(incident, (_, v) => typeof v === "bigint" ? v.toString() : v));
+  await redis.lpush(KEYS.incidents, JSON.stringify(safe));
   await redis.ltrim(KEYS.incidents, 0, 99);
 }
 
@@ -20,7 +21,12 @@ export async function getIncidents(limit = 20): Promise<Incident[]> {
 
 export async function saveAgentState(state: Partial<AgentState>): Promise<void> {
   const current = await getAgentState();
-  await redis.set(KEYS.agentState, JSON.stringify({ ...current, ...state, lastProcessedBlock: state.lastProcessedBlock?.toString() ?? current.lastProcessedBlock.toString() }));
+  const merged = {
+    ...current,
+    ...state,
+    lastProcessedBlock: (state.lastProcessedBlock ?? current.lastProcessedBlock).toString(),
+  };
+  await redis.set(KEYS.agentState, JSON.stringify(merged));
 }
 
 export async function getAgentState(): Promise<AgentState> {
@@ -36,5 +42,5 @@ export async function saveLastBlock(block: bigint): Promise<void> {
 
 export async function getLastBlock(): Promise<bigint> {
   const raw = await redis.get<string>(KEYS.lastBlock);
-  return raw ? BigInt(raw) : 0n;
+  return raw ? BigInt(String(raw)) : 0n;
 }
