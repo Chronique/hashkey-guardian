@@ -49,9 +49,14 @@ export async function runAgentCycle() {
     await saveLastBlock(currentBlock);
     await saveAgentState({ isRunning: false, lastProcessedBlock: currentBlock, lastRunAt: Date.now() });
 
-    return { success: true, incident, message: `Blocks ${fromBlock}-${currentBlock}. Events: ${events.length}. Risk: ${analysis.risk_score}/10` };
+    return {
+  success: true,
+  incident,
+  message: `Blocks ${fromBlock.toString()}-${currentBlock.toString()}. Events: ${events.length}. Risk: ${analysis.risk_score}/10`
+};
   } catch (error) {
     await saveAgentState({ isRunning: false });
     return { success: false, message: `Error: ${error instanceof Error ? error.message : String(error)}` };
   }
 }
+

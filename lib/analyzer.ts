@@ -36,7 +36,7 @@ Analyze these HashKeyChain testnet events for anomalies.`;
       "X-Title": "DeFi Guardian",
     },
     body: JSON.stringify({
-      model: "anthropic/claude-3.5-sonnet",
+      model: "meta-llama/llama-3.1-8b-instruct:free",
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: userMessage }
@@ -67,3 +67,5 @@ Analyze these HashKeyChain testnet events for anomalies.`;
     };
   }
 }
+
+
