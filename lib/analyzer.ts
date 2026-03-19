@@ -36,7 +36,7 @@ Analyze these HashKeyChain testnet events for anomalies.`;
       "X-Title": "DeFi Guardian",
     },
     body: JSON.stringify({
-      model: "meta-llama/llama-3.1-8b-instruct:free",
+      model: "nvidia/nemotron-3-super-120b-a12b:free",
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: userMessage }
@@ -67,5 +67,8 @@ Analyze these HashKeyChain testnet events for anomalies.`;
     };
   }
 }
+
+
+
 
 
