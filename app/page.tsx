@@ -30,7 +30,10 @@ export default function Dashboard() {
   const triggerAgent = async () => {
     setAgentLoading(true);
     try {
-      const res = await fetch("/api/agent");
+      const res = await fetch("/api/agent", {
+      method: "POST",
+      headers: { "authorization": `Bearer ${process.env.NEXT_PUBLIC_CRON_SECRET ?? "guardian123"}` }
+    });
       const data = await res.json();
       console.log("[Agent]", data);
       await fetchData();
@@ -100,3 +103,4 @@ export default function Dashboard() {
     </main>
   );
 }
+
