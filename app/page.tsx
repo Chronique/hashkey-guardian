@@ -55,7 +55,10 @@ export default function Dashboard() {
     <main className="min-h-screen bg-gray-950 text-white p-4 md:p-8">
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2"> DeFi Guardian</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+          <img src="/logo.svg" alt="DeFi Guardian" className="w-10 h-10" />
+          DeFi Guardian
+        </h1>
           <p className="text-sm text-gray-400 mt-1">AI-powered DeFi monitor for HashKeyChain</p>
         </div>
         <div className="flex gap-2">
@@ -103,4 +106,5 @@ export default function Dashboard() {
     </main>
   );
 }
+
 
