@@ -5,7 +5,7 @@ import { generateIncidentId } from "@/lib/reporter";
 import { saveIncident, saveLastBlock, getLastBlock, saveAgentState } from "@/lib/redis";
 import type { Incident } from "@/types";
 
-const RISK_THRESHOLD = 6;
+const RISK_THRESHOLD = 1;
 const BLOCK_RANGE = 10n;
 const MAX_BLOCK_RANGE = 50n;
 
