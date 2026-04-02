@@ -26,12 +26,12 @@ export async function analyzeEvents(events: OnchainEvent[], blockNumber: bigint)
       "X-Title": "DeFi Guardian",
     },
     body: JSON.stringify({
-      model: "meta-llama/llama-3.3-70b-instruct:free",
+      model: "nvidia/nemotron-3-super-120b-a12b:free",
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: userMessage }
       ],
-      max_tokens: 500,
+      max_tokens: 300,
       temperature: 0,
     }),
   });
@@ -78,3 +78,4 @@ export async function analyzeEvents(events: OnchainEvent[], blockNumber: bigint)
     };
   }
 }
+
