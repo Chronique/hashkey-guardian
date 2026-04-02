@@ -7,6 +7,7 @@ import type { Incident } from "@/types";
 
 const RISK_THRESHOLD = 6;
 const BLOCK_RANGE = 10n;
+const MAX_BLOCK_RANGE = 50n;
 
 export async function runAgentCycle() {
   console.log("[Agent] Starting cycle...");
@@ -17,13 +18,18 @@ export async function runAgentCycle() {
     const lastBlock = await getLastBlock();
     const fromBlock = lastBlock > 0n ? lastBlock + 1n : currentBlock - BLOCK_RANGE;
 
-    if (fromBlock > currentBlock) {
+    // Cap block range to prevent RPC timeout
+    const cappedFrom = fromBlock < currentBlock - MAX_BLOCK_RANGE
+      ? currentBlock - MAX_BLOCK_RANGE
+      : fromBlock;
+
+    if (cappedFrom > currentBlock) {
       await saveAgentState({ isRunning: false });
       return { success: true, message: "No new blocks" };
     }
 
-    console.log(`[Agent] Scanning ${fromBlock.toString()}  ${currentBlock.toString()}`);
-    const events = await getLogsFromRange(fromBlock, currentBlock);
+    console.log(`[Agent] Scanning ${cappedFrom.toString()} - ${currentBlock.toString()}`);
+    const events = await getLogsFromRange(cappedFrom, currentBlock);
     console.log(`[Agent] ${events.length} events found`);
 
     const analysis = await analyzeEvents(events, currentBlock);
@@ -55,7 +61,7 @@ export async function runAgentCycle() {
     return {
       success: true,
       incident,
-      message: `Blocks ${fromBlock.toString()}-${currentBlock.toString()}. Events: ${events.length}. Risk: ${analysis.risk_score}/10`,
+      message: `Blocks ${cappedFrom.toString()}-${currentBlock.toString()}. Events: ${events.length}. Risk: ${analysis.risk_score}/10`,
     };
   } catch (error) {
     await saveAgentState({ isRunning: false });
